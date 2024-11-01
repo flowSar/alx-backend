@@ -14,15 +14,17 @@ class LRUCache(BaseCaching):
         """insert new item and discard the least recently used  if
         len(cache_data) > BaseCaching.MAX_ITEMS"""
         if key and item:
-            if key in self.cache_data:
-                self.cache_data.pop(key)
-            elif len(self.cache_data) >= BaseCaching.MAX_ITEMS:
-                last = self.cache_data.popitem()
-                print('DISCARD: ', last[0])
+            if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
+                removed = self.order.pop(0)
+                self.cache_data.pop(removed)
+                print("DISCARD: {}".format(removed))
             self.cache_data[key] = item
+            self.order.append(key)
 
     def get(self, key):
         """get cache_data"""
-        if key is not None:
+        if key in self.cache_data:
+            self.order.remove(key)
+            self.order.append(key)
             return self.cache_data.get(key)
-        return None
+
